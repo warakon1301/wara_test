@@ -9,11 +9,14 @@ const saltRounds = 10;
 //  db.sequelize.sync({ force: true });
 const createusers = () =>{
   users.map(async (users) =>{
-    const salt = await bcrypt.genSalt(saltRounds);
+  const find = await db.User.findOne({where:{email:users.email}})
+    if(!find){
+      const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(users.password, salt);
         db.User.create({...users,
           password: hash,
           salt,})
+    }
     })
 }
 createusers();
